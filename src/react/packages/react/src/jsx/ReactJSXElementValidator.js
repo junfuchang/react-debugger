@@ -1,15 +1,5 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-/**
- * ReactElementValidator provides a wrapper around a element factory
- * which validates the props passed to the element. This is intended to be
- * used only in DEV and could be replaced by a static type checker for languages
- * that support it.
+ * ReactElementValidator 提供了一个元素工厂的包装器，它验证传递给元素的道具。这旨在仅在 DEV 中使用，并且可以由支持它的语言的静态类型检查器替换。
  */
 import isValidElementType from "shared/isValidElementType";
 import getComponentNameFromType from "shared/getComponentNameFromType";
@@ -88,6 +78,7 @@ function getDeclarationErrorAddendum() {
 function getSourceInfoErrorAddendum(source) {
   if (__DEV__) {
     if (source !== undefined) {
+      // eslint-disable-next-line no-useless-escape
       const fileName = source.fileName.replace(/^.*[\\\/]/, "");
       const lineNumber = source.lineNumber;
       return "\n\nCheck your code at " + fileName + ":" + lineNumber + ".";
@@ -302,6 +293,7 @@ function validateFragmentProps(fragment) {
 
 const didWarnAboutKeySpread = {};
 
+/** babel JSX校验 函数的参数是babel传进来的 */
 export function jsxWithValidation(
   type,
   props,
@@ -311,10 +303,9 @@ export function jsxWithValidation(
   self
 ) {
   if (__DEV__) {
+    // JSX类型校验
     const validType = isValidElementType(type);
-
-    // We warn in this case but don't throw. We expect the element creation to
-    // succeed and there will likely be errors in render.
+    // 在这种情况下我们会发出警告但不会抛出。我们希望元素创建成功，并且渲染中可能会出现错误。
     if (!validType) {
       let info = "";
       if (
@@ -323,11 +314,13 @@ export function jsxWithValidation(
           type !== null &&
           Object.keys(type).length === 0)
       ) {
+        // “您可能忘记从文件中导出您的组件它在中定义，或者您可能混淆了默认导入和命名导入。”
         info +=
           " You likely forgot to export your component from the file " +
           "it's defined in, or you might have mixed up default and named imports.";
       }
 
+      //
       const sourceInfo = getSourceInfoErrorAddendum(source);
       if (sourceInfo) {
         info += sourceInfo;
@@ -359,18 +352,16 @@ export function jsxWithValidation(
 
     const element = jsxDEV(type, props, key, source, self);
 
-    // The result can be nullish if a mock or a custom function is used.
-    // TODO: Drop this when these are no longer allowed as the type argument.
+    //如果使用模拟或自定义函数，结果可能为空。    //TODO：当这些不再被允许作为类型参数时，请删除它。
     if (element == null) {
       return element;
     }
 
-    // Skip key warning if the type isn't valid since our key validation logic
-    // doesn't expect a non-string/function type and can throw confusing errors.
-    // We don't want exception behavior to differ between dev and prod.
-    // (Rendering will throw with a helpful message and as soon as the type is
-    // fixed, the key warnings will appear.)
-
+    //如果类型无效，则跳过密钥警告，因为我们的密钥验证逻辑
+    //不期望非字符串/函数类型并且会抛出令人困惑的错误。
+    //我们不希望 dev 和 prod 之间的异常行为不同。
+    //（渲染将抛出一条有用的消息，一旦类型是
+    //已修复，将出现关键警告。）
     if (validType) {
       const children = props.children;
       if (children !== undefined) {
@@ -432,10 +423,7 @@ export function jsxWithValidation(
   }
 }
 
-// These two functions exist to still get child warnings in dev
-// even with the prod transform. This means that jsxDEV is purely
-// opt-in behavior for better messages but that we won't stop
-// giving you warnings if you use production apis.
+// 这两个函数的存在是为了在 dev 中仍然获得子警告，即使使用 prod 转换也是如此。这意味着 jsxDEV 纯粹是选择加入行为以获得更好的消息，但如果您使用生产 api，我们不会停止向您发出警告。
 export function jsxWithValidationStatic(type, props, key) {
   if (__DEV__) {
     return jsxWithValidation(type, props, key, true);

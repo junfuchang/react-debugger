@@ -4,28 +4,18 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- *      
+ *
  */
 
-                                                     
-             
-            
-                             
-                             
-                              
-                                             
-                                                      
-                                                  
-
-import {noTimeout, supportsHydration} from './ReactFiberConfig';
-import {createHostRootFiber} from './ReactFiber';
+import { noTimeout, supportsHydration } from "./ReactFiberConfig";
+import { createHostRootFiber } from "./ReactFiber";
 import {
   NoLane,
   NoLanes,
   NoTimestamp,
   TotalLanes,
   createLaneMap,
-} from './ReactFiberLane';
+} from "./ReactFiberLane";
 import {
   enableSuspenseCallback,
   enableCache,
@@ -33,25 +23,18 @@ import {
   enableProfilerTimer,
   enableUpdaterTracking,
   enableTransitionTracing,
-} from 'shared/ReactFeatureFlags';
-import {initializeUpdateQueue} from './ReactFiberClassUpdateQueue';
-import {LegacyRoot, ConcurrentRoot} from './ReactRootTags';
-import {createCache, retainCache} from './ReactFiberCacheComponent';
-
-                         
-               
-                        
-               
-  
+} from "shared/ReactFeatureFlags";
+import { initializeUpdateQueue } from "./ReactFiberClassUpdateQueue";
+import { LegacyRoot, ConcurrentRoot } from "./ReactRootTags";
+import { createCache, retainCache } from "./ReactFiberCacheComponent";
 
 function FiberRootNode(
-                   
-  containerInfo     ,
+  containerInfo,
   // $FlowFixMe[missing-local-annot]
   tag,
-  hydrate     ,
-  identifierPrefix     ,
-  onRecoverableError     ,
+  hydrate,
+  identifierPrefix,
+  onRecoverableError
 ) {
   this.tag = tag;
   this.containerInfo = containerInfo;
@@ -122,39 +105,39 @@ function FiberRootNode(
   if (__DEV__) {
     switch (tag) {
       case ConcurrentRoot:
-        this._debugRootType = hydrate ? 'hydrateRoot()' : 'createRoot()';
+        this._debugRootType = hydrate ? "hydrateRoot()" : "createRoot()";
         break;
       case LegacyRoot:
-        this._debugRootType = hydrate ? 'hydrate()' : 'render()';
+        this._debugRootType = hydrate ? "hydrate()" : "render()";
         break;
     }
   }
 }
 
 export function createFiberRoot(
-  containerInfo           ,
-  tag         ,
-  hydrate         ,
-  initialChildren               ,
-  hydrationCallbacks                                   ,
-  isStrictMode         ,
-  concurrentUpdatesByDefaultOverride                ,
+  containerInfo,
+  tag,
+  hydrate,
+  initialChildren,
+  hydrationCallbacks,
+  isStrictMode,
+  concurrentUpdatesByDefaultOverride,
   // TODO: We have several of these arguments that are conceptually part of the
   // host config, but because they are passed in at runtime, we have to thread
   // them through the root constructor. Perhaps we should put them all into a
   // single type, like a DynamicHostConfig that is defined by the renderer.
-  identifierPrefix        ,
-  onRecoverableError                                 ,
-  transitionCallbacks                                   ,
-)            {
+  identifierPrefix,
+  onRecoverableError,
+  transitionCallbacks
+) {
   // $FlowFixMe[invalid-constructor] Flow no longer supports calling new on functions
-  const root            = (new FiberRootNode(
+  const root = new FiberRootNode(
     containerInfo,
     tag,
     hydrate,
     identifierPrefix,
-    onRecoverableError,
-  )     );
+    onRecoverableError
+  );
   if (enableSuspenseCallback) {
     root.hydrationCallbacks = hydrationCallbacks;
   }
@@ -168,7 +151,7 @@ export function createFiberRoot(
   const uninitializedFiber = createHostRootFiber(
     tag,
     isStrictMode,
-    concurrentUpdatesByDefaultOverride,
+    concurrentUpdatesByDefaultOverride
   );
   root.current = uninitializedFiber;
   uninitializedFiber.stateNode = root;
@@ -186,17 +169,17 @@ export function createFiberRoot(
     // retained separately.
     root.pooledCache = initialCache;
     retainCache(initialCache);
-    const initialState            = {
+    const initialState = {
       element: initialChildren,
       isDehydrated: hydrate,
       cache: initialCache,
     };
     uninitializedFiber.memoizedState = initialState;
   } else {
-    const initialState            = {
+    const initialState = {
       element: initialChildren,
       isDehydrated: hydrate,
-      cache: (null     ), // not enabled yet
+      cache: null, // not enabled yet
     };
     uninitializedFiber.memoizedState = initialState;
   }

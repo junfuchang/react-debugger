@@ -309,6 +309,7 @@ export function jsxDEV(type, config, maybeKey, source, self) {
     for (propName in config) {
       if (
         hasOwnProperty.call(config, propName) &&
+        // eslint-disable-next-line no-prototype-builtins
         !RESERVED_PROPS.hasOwnProperty(propName)
       ) {
         props[propName] = config[propName];

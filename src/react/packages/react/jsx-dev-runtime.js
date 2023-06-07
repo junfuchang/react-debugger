@@ -1,10 +1,2 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- *      
- */
-
-export {Fragment, jsxDEV} from './src/jsx/ReactJSX';
+/**该文件在 babel 进行 JSX转换时用到 */
+export { Fragment, jsxDEV } from "./src/jsx/ReactJSX";
